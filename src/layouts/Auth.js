@@ -11,6 +11,7 @@ import FooterSmall from "components/Footers/FooterSmall.js";
 import Login from "views/auth/Login.js";
 import ForgetPassword from "views/auth/ForgetPassword.js";
 import Register from "views/auth/Register.js";
+import ResetPassword from "views/auth/ResetPassword";
 
 export default function Auth() {
   return (
@@ -29,6 +30,7 @@ export default function Auth() {
           <Route path="/auth/login" exact component={Login} />
           <Route path="/auth/forgetPassword" exact component={ForgetPassword} />
           <Route path="/auth/register" exact component={Register} />
+          <Route path="/auth/ResetPassword" exact component={ResetPassword} />
             <Redirect from="/auth" to="/auth/login" />
           </Switch>
           <FooterSmall absolute />

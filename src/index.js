@@ -1,4 +1,4 @@
-import React from "react";
+import React , {lazy , Suspense}from "react";
 import ReactDOM from "react-dom";
 import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
 
@@ -12,12 +12,13 @@ import Auth from "layouts/Auth.js";
 
 // views without layouts
 
-import Landing from "views/Landing.js";
-import Profile from "views/Profile.js";
-import Index from "views/Index.js";
+const Landing = lazy(()=> import("views/Landing.js")) 
+const Profile = lazy(()=> import("views/Profile.js")) 
+const Index = lazy(()=> import("views/Index.js")) 
 
 ReactDOM.render(
   <BrowserRouter>
+        <Suspense fallback={<div>loading...</div>}>
     <Switch>
       {/* add routes with layouts */}
       <Route path="/admin" component={Admin} />
@@ -29,6 +30,7 @@ ReactDOM.render(
       {/* add redirect for first page azerty */}
       <Redirect from="*" to="/" />
     </Switch>
+  </Suspense>
   </BrowserRouter>,
   document.getElementById("root")
 );
