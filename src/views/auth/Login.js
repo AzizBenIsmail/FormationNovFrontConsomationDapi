@@ -99,7 +99,7 @@ export default function Login() {
             <div className="flex flex-wrap mt-6 relative">
               <div className="w-1/2">
                 <Link 
-                  to="/auth/forget"
+                  to="/auth/forgetPassword"
                   className="text-blueGray-200"
                 >
                   <small>Forgot password?</small>

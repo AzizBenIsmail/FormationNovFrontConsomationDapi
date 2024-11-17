@@ -26,7 +26,7 @@ ReactDOM.render(
       <Route path="/landing" exact component={Landing} />
       <Route path="/profile" exact component={Profile} />
       <Route path="/" exact component={Index} />
-      {/* add redirect for first page */}
+      {/* add redirect for first page azerty */}
       <Redirect from="*" to="/" />
     </Switch>
   </BrowserRouter>,
