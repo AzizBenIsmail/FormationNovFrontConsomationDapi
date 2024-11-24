@@ -5,12 +5,15 @@ import {
   deleteUser,
   adduser,
   updateUser,
-  getOrderAllUsersByAge
+  getOrderAllUsersByAge,
+  searchUsersByName,
+  adduserwithImg,
 } from "../../Service/apiUser";
 // components
 
 export default function CardTable({ color }) {
   const [users, setUsers] = useState([]); //bech recupreation feha liste users
+  const [search, setSearch] = useState(""); //champs recherche
 
   const [newUser, setNewUser] = useState({
     //pour ajouter un user
@@ -21,11 +24,27 @@ export default function CardTable({ color }) {
     password: "",
   });
 
+  const [image, setImage] = useState(null); //pour ajouter une image
+
   const handelChange = (e) => {
     const { name, value } = e.target; //
     setNewUser({ ...newUser, [name]: value });
     console.log(newUser);
   };
+
+  
+  const handelChangefile = (e) => { //pour ajouter une image
+    setImage(e.target.files[0]);
+  };
+
+  const searchUser = useCallback(async (search) => {
+    await searchUsersByName(search)
+      .then((res) => {
+        console.log(res.data.userList);
+        setUsers(res.data.userList);
+      })
+      .catch((err) => console.log(err));
+  }, []);
 
   const getUsers = useCallback(async () => {
     await getAllUsers()
@@ -54,6 +73,20 @@ export default function CardTable({ color }) {
     }
   };
 
+  const handleAddUserWithImg = async () => {
+    try {
+      const formData = new FormData(); //pour L'image
+      formData.append("firstName", newUser.firstName);
+      formData.append("lastName", newUser.lastName);
+      formData.append("email", newUser.email);
+      formData.append("password", newUser.password);
+      formData.append("image_user", image);
+      await adduserwithImg(formData);
+      getUsers();
+    } catch (error) {
+      console.log(error);
+    }
+  };
   const handleUpdateUser = async (newUser) => {
     try {
       await updateUser(newUser._id, newUser);
@@ -71,7 +104,6 @@ export default function CardTable({ color }) {
       })
       .catch((err) => console.log(err));
   }, []);
-
 
   // useEffect(() => {
   //   getUsers();
@@ -106,8 +138,30 @@ export default function CardTable({ color }) {
               >
                 Users List
               </h3>
-              <button className="ml-3 bg-indigo-500 text-white active:bg-indigo-600 font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
-              onClick={()=>{trieUsers()}}>Trie</button>
+              <button
+                className="ml-3 bg-indigo-500 text-white active:bg-indigo-600 font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
+                onClick={() => {
+                  trieUsers();
+                }}
+              >
+                Trie
+              </button>
+              <input
+                type="text"
+                placeholder="search by First Name"
+                onChange={(e) => {
+                  setSearch(e.target.value);
+                }}
+                class="px-2 py-1 placeholder-blueGray-300 text-blueGray-600 relative bg-white bg-white rounded text-sm shadow outline-none focus:outline-none focus:shadow-outline w-full"
+              ></input>
+              <button
+                type="button"
+                onClick={(e) => {
+                  searchUser(search);
+                }}
+              >
+                Submit
+              </button>
             </div>
           </div>
         </div>
@@ -277,12 +331,26 @@ export default function CardTable({ color }) {
           onChange={handelChange}
           placeholder="password "
         />
+        <br></br>
+        <input //pour ajouter un image
+          className="ml-2"
+          type="file"
+          name="image_user"
+          onChange={handelChangefile}
+          placeholder="age "
+        />
         <div className="mt-2 ml-2">
           <button
             onClick={handleAddUser}
             className="bg-lightBlue-500 text-white active:bg-lightBlue-600 font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
           >
             AddUser
+          </button>
+          <button
+            onClick={handleAddUserWithImg}
+            className="bg-lightBlue-500 text-white active:bg-lightBlue-600 font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
+          >
+            adduserwithImg
           </button>
           <button
             className="bg-lightBlue-500 text-white active:bg-lightBlue-600 font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"

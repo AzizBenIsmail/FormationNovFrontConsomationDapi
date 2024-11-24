@@ -8,6 +8,12 @@ export async function getAllUsers() {
  export async function adduser(userData) {
      return await axios.post(`${apiURL}/addUser`,userData) 
  }
+
+ export async function adduserwithImg(userData) {
+    return await axios.post(`${apiURL}/addClient`,userData, {
+        headers: { 'Content-Type': 'multipart/form-data' }, withCredentials: true,
+    }) 
+}
  export async function updateUser(userId,userData) {
      return await axios.put(`${apiURL}/updateUser/${userId}`,userData)
  }
@@ -17,4 +23,8 @@ export async function getAllUsers() {
 
  export async function getOrderAllUsersByAge() {
     return await axios.get(`${apiURL}/getOrderAllUsersByAge`)
+}
+
+export async function searchUsersByName(name) {
+    return await axios.get(`${apiURL}/searchUsersByName/?name=${name}`)
 }
