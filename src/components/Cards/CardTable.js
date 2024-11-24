@@ -14,6 +14,7 @@ import {
 export default function CardTable({ color }) {
   const [users, setUsers] = useState([]); //bech recupreation feha liste users
   const [search, setSearch] = useState(""); //champs recherche
+  const [error, setError] = useState("")
 
   const [newUser, setNewUser] = useState({
     //pour ajouter un user
@@ -24,7 +25,7 @@ export default function CardTable({ color }) {
     password: "",
   });
 
-  const [image, setImage] = useState(null); //pour ajouter une image
+  const [image, setImage] = useState(undefined); //pour ajouter une image
 
   const handelChange = (e) => {
     const { name, value } = e.target; //
@@ -75,12 +76,23 @@ export default function CardTable({ color }) {
 
   const handleAddUserWithImg = async () => {
     try {
+
+      if(!image){
+       // alert('Please ajouter votre image');
+
+       setError('Please ajouter votre image');
+        return;
+      }
+
       const formData = new FormData(); //pour L'image
       formData.append("firstName", newUser.firstName);
       formData.append("lastName", newUser.lastName);
       formData.append("email", newUser.email);
       formData.append("password", newUser.password);
+      if(image !== null) {
       formData.append("image_user", image);
+      console.log("test");
+      }
       await adduserwithImg(formData);
       getUsers();
     } catch (error) {
@@ -337,8 +349,8 @@ export default function CardTable({ color }) {
           type="file"
           name="image_user"
           onChange={handelChangefile}
-          placeholder="age "
         />
+        {error && (<p className="text-red-500 ">{error}</p>)}
         <div className="mt-2 ml-2">
           <button
             onClick={handleAddUser}
