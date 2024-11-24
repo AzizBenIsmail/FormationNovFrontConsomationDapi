@@ -16,5 +16,5 @@ export async function getAllUsers() {
  }
 
  export async function getOrderAllUsersByAge() {
-    return await axios.delete(`${apiURL}/getOrderAllUsersByAge`)
+    return await axios.get(`${apiURL}/getOrderAllUsersByAge`)
 }

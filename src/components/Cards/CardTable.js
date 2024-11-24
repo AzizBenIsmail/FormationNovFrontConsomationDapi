@@ -63,7 +63,15 @@ export default function CardTable({ color }) {
     }
   };
 
-  
+  const trieUsers = useCallback(async () => {
+    await getOrderAllUsersByAge()
+      .then((res) => {
+        console.log(res.data.userList);
+        setUsers(res.data.userList);
+      })
+      .catch((err) => console.log(err));
+  }, []);
+
 
   // useEffect(() => {
   //   getUsers();
@@ -99,7 +107,7 @@ export default function CardTable({ color }) {
                 Users List
               </h3>
               <button className="ml-3 bg-indigo-500 text-white active:bg-indigo-600 font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
-              >Trie</button>
+              onClick={()=>{trieUsers()}}>Trie</button>
             </div>
           </div>
         </div>

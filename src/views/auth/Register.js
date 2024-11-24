@@ -1,7 +1,30 @@
-import React from "react";
+import React , {useState} from "react";
 import { Link } from "react-router-dom";
-
+import {adduser} from "../../Service/apiUser"
 export default function Register() {
+  const [newUser, setNewUser] = useState({
+    //pour ajouter un user
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+  });
+
+  const handelChange = (e) => {
+    const { name, value } = e.target; //
+    setNewUser({ ...newUser, [name]: value });
+    console.log(newUser);
+  };
+  
+  
+  const handleAddUser = async () => {
+    try {
+      await adduser(newUser);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <>
       <div className="container mx-auto px-4 h-full">
@@ -50,15 +73,32 @@ export default function Register() {
                       className="block uppercase text-blueGray-600 text-xs font-bold mb-2"
                       htmlFor="grid-password"
                     >
-                      Name
+                      FirstName
                     </label>
                     <input
-                      type="email"
+                      type="text"
+                      name="firstName"
+                      onChange={handelChange}
                       className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                      placeholder="Name"
+                      placeholder="First Name"
                     />
                   </div>
 
+                  <div className="relative w-full mb-3">
+                    <label
+                      className="block uppercase text-blueGray-600 text-xs font-bold mb-2"
+                      htmlFor="grid-password"
+                    >
+                      LastName
+                    </label>
+                    <input
+                      type="text"
+                      name="lastName"
+                      onChange={handelChange}
+                      className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                      placeholder="Last name"
+                    />
+                  </div>
                   <div className="relative w-full mb-3">
                     <label
                       className="block uppercase text-blueGray-600 text-xs font-bold mb-2"
@@ -68,11 +108,13 @@ export default function Register() {
                     </label>
                     <input
                       type="email"
+                      onChange={handelChange}
                       className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                       placeholder="Email"
-                    />
-                  </div>
+                      name="email"
 
+                    />
+                  </div>                  
                   <div className="relative w-full mb-3">
                     <label
                       className="block uppercase text-blueGray-600 text-xs font-bold mb-2"
@@ -82,8 +124,10 @@ export default function Register() {
                     </label>
                     <input
                       type="password"
+                      onChange={handelChange}
                       className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                       placeholder="Password"
+                      name="password"
                     />
                   </div>
 
@@ -111,6 +155,7 @@ export default function Register() {
                     <button
                       className="bg-blueGray-800 text-white active:bg-blueGray-600 text-sm font-bold uppercase px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 w-full ease-linear transition-all duration-150"
                       type="button"
+                      onClick={() => {adduser(newUser)}}
                     >
                       Create Account
                     </button>
