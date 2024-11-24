@@ -1,12 +1,31 @@
-import React , {useCallback , useState , useEffect }from "react";
+import React, { useCallback, useState, useEffect } from "react";
 import PropTypes from "prop-types";
-import { getAllUsers } from "../../Service/apiUser";
+import {
+  getAllUsers,
+  deleteUser,
+  adduser,
+  updateUser,
+  getOrderAllUsersByAge
+} from "../../Service/apiUser";
 // components
 
-import TableDropdown from "components/Dropdowns/TableDropdown.js";
-
 export default function CardTable({ color }) {
-  const [users, setUsers] = useState([]);
+  const [users, setUsers] = useState([]); //bech recupreation feha liste users
+
+  const [newUser, setNewUser] = useState({
+    //pour ajouter un user
+    firstName: "",
+    lastName: "",
+    age: "",
+    email: "",
+    password: "",
+  });
+
+  const handelChange = (e) => {
+    const { name, value } = e.target; //
+    setNewUser({ ...newUser, [name]: value });
+    console.log(newUser);
+  };
 
   const getUsers = useCallback(async () => {
     await getAllUsers()
@@ -17,8 +36,47 @@ export default function CardTable({ color }) {
       .catch((err) => console.log(err));
   }, []);
 
+  const handleDeleteUser = async (id) => {
+    try {
+      await deleteUser(id);
+      getUsers();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleAddUser = async () => {
+    try {
+      await adduser(newUser);
+      getUsers();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleUpdateUser = async (newUser) => {
+    try {
+      await updateUser(newUser._id, newUser);
+      getUsers();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  
+
+  // useEffect(() => {
+  //   getUsers();
+  // }, [getUsers]);
+
   useEffect(() => {
     getUsers();
+
+    const interval = setInterval(() => {
+      getUsers();
+    }, 35000);
+
+    return () => clearInterval(interval);
   }, [getUsers]);
 
   return (
@@ -40,6 +98,8 @@ export default function CardTable({ color }) {
               >
                 Users List
               </h3>
+              <button className="ml-3 bg-indigo-500 text-white active:bg-indigo-600 font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
+              >Trie</button>
             </div>
           </div>
         </div>
@@ -86,46 +146,144 @@ export default function CardTable({ color }) {
                       : "bg-lightBlue-800 text-lightBlue-300 border-lightBlue-700")
                   }
                 >
+                  age
+                </th>{" "}
+                <th
+                  className={
+                    "px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left " +
+                    (color === "light"
+                      ? "bg-blueGray-50 text-blueGray-500 border-blueGray-100"
+                      : "bg-lightBlue-800 text-lightBlue-300 border-lightBlue-700")
+                  }
+                >
                   email
                 </th>
-                
+                <th
+                  className={
+                    "px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left " +
+                    (color === "light"
+                      ? "bg-blueGray-50 text-blueGray-500 border-blueGray-100"
+                      : "bg-lightBlue-800 text-lightBlue-300 border-lightBlue-700")
+                  }
+                >
+                  Action
+                </th>
               </tr>
             </thead>
             <tbody>
-              {users.map((user,index) => (
-              <tr key={index}>
-                <th className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-left flex items-center">
-                  <img
-                    src={`http://localhost:5000/images/Users/${user.user_image}`}
-                    className="h-12 w-12 bg-white rounded-full border"
-                    alt="..."
-                  ></img>{" "}
-                  <span
-                    className={
-                      "ml-3 font-bold " +
-                      +(color === "light" ? "text-blueGray-600" : "text-white")
-                    }
-                  >
-                    Img
-                  </span>
-                </th>
-                <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
-                  {user.firstName}
-                </td>
-                <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
-                {user.lastName}
-
-                </td>
-                <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
-                  <div className="flex">
-                  {user.email}
-
-                  </div>
-                </td>
-              </tr>
+              {users.map((user, index) => (
+                <tr key={index}>
+                  <th className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-left flex items-center">
+                    <img
+                      src={`http://localhost:5000/images/Users/${user.user_image}`}
+                      className="h-12 w-12 bg-white rounded-full border"
+                      alt="..."
+                    ></img>{" "}
+                    <span
+                      className={
+                        "ml-3 font-bold " +
+                        +(color === "light"
+                          ? "text-blueGray-600"
+                          : "text-white")
+                      }
+                    >
+                      Img
+                    </span>
+                  </th>
+                  <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
+                    {user.firstName}
+                  </td>
+                  <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
+                    {user.lastName}
+                  </td>
+                  <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
+                    <div className="flex">{user.age}</div>
+                  </td>
+                  <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
+                    <div className="flex">{user.email}</div>
+                  </td>
+                  <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
+                    <div className="flex">
+                      <button
+                        className="bg-red-500 text-white active:bg-red-600 font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
+                        onClick={() => {
+                          handleDeleteUser(user._id);
+                        }}
+                      >
+                        Supprimer
+                      </button>
+                      <button
+                        className="bg-teal-500 text-white active:bg-teal-600 font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
+                        onClick={() => {
+                          setNewUser(user);
+                        }}
+                      >
+                        UpdateUser
+                      </button>
+                    </div>
+                  </td>
+                </tr>
               ))}
             </tbody>
           </table>
+        </div>
+      </div>
+      <div>
+        <input
+          className="ml-2"
+          type="text"
+          name="firstName"
+          onChange={handelChange}
+          value={newUser.firstName}
+          placeholder="first name"
+        />
+        <input
+          className="ml-2"
+          type="text"
+          name="lastName"
+          onChange={handelChange}
+          value={newUser.lastName}
+          placeholder="last name"
+        />
+        <input
+          className="ml-2"
+          type="number"
+          name="age"
+          value={newUser.age}
+          onChange={handelChange}
+          placeholder="age "
+        />
+        <input
+          className="ml-2"
+          type="text"
+          name="email"
+          onChange={handelChange}
+          value={newUser.email}
+          placeholder="email"
+        />
+        <input
+          className="ml-2"
+          type="password"
+          name="password"
+          value={newUser.password}
+          onChange={handelChange}
+          placeholder="password "
+        />
+        <div className="mt-2 ml-2">
+          <button
+            onClick={handleAddUser}
+            className="bg-lightBlue-500 text-white active:bg-lightBlue-600 font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
+          >
+            AddUser
+          </button>
+          <button
+            className="bg-lightBlue-500 text-white active:bg-lightBlue-600 font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
+            onClick={() => {
+              handleUpdateUser(newUser);
+            }}
+          >
+            UpdateUser
+          </button>
         </div>
       </div>
     </>
